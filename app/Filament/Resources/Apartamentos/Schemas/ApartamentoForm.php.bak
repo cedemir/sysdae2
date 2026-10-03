@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Filament\Resources\Apartamentos\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class ApartamentoForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('numero')
+                    ->required(),
+                Select::make('alojamento_id')
+                    ->relationship('alojamento', 'id')
+                    ->required(),
+                TextInput::make('andar')
+                    ->numeric(),
+                TextInput::make('capacidade')
+                    ->required()
+                    ->numeric(),
+                Toggle::make('ativo')
+                    ->required(),
+            ]);
+    }
+}

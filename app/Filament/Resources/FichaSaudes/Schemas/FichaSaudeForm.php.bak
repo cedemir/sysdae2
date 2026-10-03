@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Filament\Resources\FichaSaudes\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class FichaSaudeForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('aluno_id')
+                    ->relationship('aluno', 'id')
+                    ->required(),
+                TextInput::make('tipo_sanguineo')
+                    ->required()
+                    ->default('nao_informado'),
+                Textarea::make('alergias')
+                    ->columnSpanFull(),
+                Textarea::make('condicoes_saude')
+                    ->columnSpanFull(),
+                Textarea::make('medicamentos_uso')
+                    ->columnSpanFull(),
+                Textarea::make('restricoes_alimentares')
+                    ->columnSpanFull(),
+                Textarea::make('necessidades_especiais')
+                    ->columnSpanFull(),
+                TextInput::make('cartao_sus'),
+                TextInput::make('plano_saude'),
+                TextInput::make('unidade_referencia'),
+                Textarea::make('observacoes')
+                    ->columnSpanFull(),
+                TextInput::make('user_id')
+                    ->numeric(),
+            ]);
+    }
+}

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Filament\Resources\Acessos\Schemas;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+class AcessoForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('perfil')
+                    ->required(),
+                TextInput::make('recurso')
+                    ->required(),
+                TextInput::make('nivel')
+                    ->required(),
+                TextInput::make('ordem')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+            ]);
+    }
+}

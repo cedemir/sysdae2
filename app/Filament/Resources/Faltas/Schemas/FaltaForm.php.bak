@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Filament\Resources\Faltas\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class FaltaForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('aluno_id')
+                    ->relationship('aluno', 'id')
+                    ->required(),
+                DatePicker::make('data_falta')
+                    ->required(),
+                Toggle::make('justificada')
+                    ->required(),
+                Textarea::make('observacao')
+                    ->columnSpanFull(),
+                TextInput::make('user_id')
+                    ->numeric(),
+            ]);
+    }
+}

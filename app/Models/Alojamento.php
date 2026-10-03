@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Alojamento extends Model
+{
+    use \App\Models\Concerns\Auditavel;
+
+    protected $table = 'alojamentos';
+
+    public const PUBLICOS = [
+        'masculino' => 'Masculino',
+        'feminino' => 'Feminino',
+        'misto' => 'Misto',
+    ];
+
+    protected $fillable = ['nome', 'localizacao', 'publico', 'observacoes', 'ativo'];
+
+    protected function casts(): array
+    {
+        return ['ativo' => 'boolean'];
+    }
+
+    public function apartamentos(): HasMany
+    {
+        return $this->hasMany(Apartamento::class);
+    }
+}

@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Filament\Resources\Pernoites\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class PernoiteForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('aluno_id')
+                    ->relationship('aluno', 'id')
+                    ->required(),
+                DatePicker::make('data_pernoite')
+                    ->required(),
+                Toggle::make('parcial')
+                    ->required(),
+                Textarea::make('justificativa')
+                    ->required()
+                    ->columnSpanFull(),
+                TextInput::make('forma_autorizacao'),
+                TextInput::make('quem_autorizou')
+                    ->required(),
+                TextInput::make('user_id')
+                    ->numeric(),
+            ]);
+    }
+}

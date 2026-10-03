@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Filament\Resources\Residencias\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class ResidenciaForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('aluno_id')
+                    ->relationship('aluno', 'id')
+                    ->required(),
+                TextInput::make('categoria')
+                    ->required(),
+                Select::make('apartamento_id')
+                    ->relationship('apartamento', 'id'),
+                Select::make('regime_id')
+                    ->relationship('regime', 'id'),
+                DatePicker::make('data_entrada'),
+                Textarea::make('ocorrencias')
+                    ->columnSpanFull(),
+            ]);
+    }
+}

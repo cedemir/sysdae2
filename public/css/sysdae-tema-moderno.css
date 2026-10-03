@@ -1,0 +1,187 @@
+/* Tema Moderno do SYSDAE (escolhido no menu do perfil; o padrão é o sysdae-tema.css).
+   Visual escuro em azul-marinho: menu lateral com logotipo no alto e usuário no rodapé,
+   item ativo destacado, rótulo azul acima do título, cartões arredondados e botões azuis. */
+
+/* Tons de cinza mais escuros e neutros que os do tema Clássico (definidos no AdminPanelProvider). */
+:root {
+    --gray-400: oklch(0.704 0.04 256.788);
+    --gray-500: oklch(0.554 0.046 257.417);
+    --gray-600: oklch(0.446 0.043 257.281);
+    --gray-700: oklch(0.36 0.045 260);
+    --gray-800: oklch(0.27 0.045 262);
+    --gray-900: oklch(0.205 0.04 264);
+    --gray-950: oklch(0.17 0.035 264);
+
+    --sd-azul: #2563eb;
+    --sd-azul-hover: #3b82f6;
+    --sd-azul-claro: #60a5fa;
+    --sd-raio: 1rem;
+
+    /* modo claro */
+    --sd-fundo: #f4f7fd;
+    --sd-lateral: #ffffff;
+    --sd-cartao: #ffffff;
+    --sd-borda: #dbe4f5;
+    --sd-ativo: #e8eefc;
+    --sd-texto: #0f172a;
+    --sd-texto-menu: #334155;
+    --sd-texto-suave: #64748b;
+}
+
+.dark {
+    --sd-fundo: #0a1120;
+    --sd-lateral: #0c1424;
+    --sd-cartao: #0e1729;
+    --sd-borda: #1c2943;
+    --sd-ativo: #13213f;
+    --sd-texto: #ffffff;
+    --sd-texto-menu: #cbd5e1;
+    --sd-texto-suave: #94a3b8;
+}
+
+/* ---------- Fundo ---------- */
+
+.fi-body {
+    background-color: var(--sd-fundo);
+    color: var(--sd-texto);
+}
+
+/* ---------- Menu lateral ---------- */
+
+.fi-sidebar.fi-sidebar-open,
+.fi-sidebar-nav,
+.fi-sidebar-header,
+.fi-sidebar-footer {
+    background-color: var(--sd-lateral);
+}
+.fi-sidebar {
+    border-inline-end: 1px solid var(--sd-borda);
+}
+.fi-sidebar-header {
+    --tw-ring-color: transparent;
+    box-shadow: none;
+    padding-block: 1.25rem;
+}
+.fi-sidebar-footer {
+    border-top: 1px solid var(--sd-borda);
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 0.6rem;
+    border-inline-start: 3px solid transparent;
+    padding-block: 0.6rem;
+}
+.fi-sidebar-item-label {
+    color: var(--sd-texto-menu);
+    font-weight: 600;
+}
+.fi-sidebar-item-icon {
+    color: var(--sd-texto-suave);
+}
+.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover {
+    background-color: var(--sd-ativo);
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: var(--sd-ativo);
+    border-inline-start-color: var(--sd-azul);
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label {
+    color: var(--sd-texto);
+    font-weight: 700;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon {
+    color: var(--sd-azul-claro);
+}
+
+/* Logotipo: quadrado azul com a sigla e o nome ao lado. */
+.sd-marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.sd-marca-sigla {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    background: linear-gradient(135deg, var(--sd-azul-hover), var(--sd-azul));
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 6px 18px -6px rgb(37 99 235 / 0.7);
+}
+.sd-marca-nome {
+    color: var(--sd-texto);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+}
+
+/* ---------- Cabeçalho das páginas ---------- */
+
+/* O caminho (ex.: "Alunos > Lista") vira o rótulo pequeno em azul acima do título. */
+.fi-breadcrumbs-item-label {
+    color: var(--sd-azul-claro);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.fi-breadcrumbs-item-separator {
+    color: var(--sd-texto-suave);
+}
+.fi-header-heading {
+    color: var(--sd-texto);
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1.2;
+}
+.fi-header-subheading {
+    color: var(--sd-texto-suave);
+}
+
+/* ---------- Cartões, tabelas e formulários ---------- */
+
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-fo-repeater-item {
+    background-color: var(--sd-cartao);
+    border-radius: var(--sd-raio);
+    --tw-ring-color: var(--sd-borda);
+}
+.fi-section-header-heading {
+    font-weight: 700;
+}
+
+.fi-ta-header-cell,
+.fi-ta-header-cell-sort-btn {
+    color: var(--sd-texto-suave);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.fi-input-wrp {
+    border-radius: 0.6rem;
+}
+.dark .fi-input-wrp {
+    background-color: var(--sd-fundo);
+    --tw-ring-color: var(--sd-borda);
+}
+
+/* ---------- Botões ---------- */
+
+.fi-btn {
+    border-radius: 0.6rem;
+    font-weight: 700;
+}
+.fi-btn.fi-color-primary:not(.fi-outlined) {
+    background-color: var(--sd-azul);
+    box-shadow: 0 8px 22px -8px rgb(37 99 235 / 0.75);
+}
+.fi-btn.fi-color-primary:not(.fi-outlined):hover {
+    background-color: var(--sd-azul-hover);
+}

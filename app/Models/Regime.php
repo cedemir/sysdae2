@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Regime extends Model
+{
+    use \App\Models\Concerns\Auditavel;
+
+    protected $table = 'regimes';
+
+    public const APLICACOES = [
+        'todos' => 'Todos',
+        'residente' => 'Residente',
+        'semirresidente' => 'Semirresidente',
+    ];
+
+    protected $fillable = ['nome', 'descricao', 'aplica_se_a', 'ativo'];
+
+    protected function casts(): array
+    {
+        return ['ativo' => 'boolean'];
+    }
+
+    public function residencias(): HasMany
+    {
+        return $this->hasMany(Residencia::class);
+    }
+
+    /** O regime vale para a categoria informada ('residente' ou 'semirresidente')? */
+    public function aceita(string $categoria): bool
+    {
+        return $this->aplica_se_a === 'todos' || $this->aplica_se_a === $categoria;
+    }
+}

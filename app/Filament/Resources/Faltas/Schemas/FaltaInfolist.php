@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Filament\Resources\Faltas\Schemas;
+
+use App\Models\Falta;
+use App\Models\User;
+use App\Support\Visualizacao;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class FaltaInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Falta na residência')->columns(2)->schema([
+                TextEntry::make('aluno_nome')->label('Aluno')->state(fn ($record) => $record->aluno?->nome),
+                TextEntry::make('data_falta')->label('Data')->date('d/m/Y'),
+                IconEntry::make('justificada')->label('Justificada')->boolean(),
+                TextEntry::make('registrada_por')->label('Registrada por')->placeholder('-')
+                    ->state(fn (Falta $record) => User::find($record->user_id)?->name),
+                Visualizacao::texto('observacao', 'Observação'),
+            ]),
+        ]);
+    }
+}

@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Filament\Resources\Ocorrencias\Schemas;
+
+use App\Models\Ocorrencia;
+use App\Support\Visualizacao;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class OcorrenciaInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Ocorrência')->columns(2)->schema([
+                TextEntry::make('aluno.nome')->label('Aluno'),
+                TextEntry::make('data_ocorrencia')->label('Data da ocorrência')->date('d/m/Y'),
+                IconEntry::make('sigiloso')->label('Sigilosa')->boolean(),
+                TextEntry::make('anexos_link')->label('Anexos')
+                    ->state(fn (Ocorrencia $record) => count($record->anexos ?? []) . ' arquivo(s) - abrir')
+                    ->url(fn (Ocorrencia $record) => route('anexos.ocorrencia', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn (Ocorrencia $record) => filled($record->anexos)),
+                Visualizacao::texto('descricao', 'Descrição da situação'),
+            ]),
+
+            Section::make('Comissão disciplinar')->columns(2)->schema([
+                TextEntry::make('data_reuniao')->label('Data da reunião')->date('d/m/Y')->placeholder('-'),
+                TextEntry::make('advertencia')->label('Advertência')->badge()->placeholder('-')
+                    ->formatStateUsing(fn (?string $state) => Ocorrencia::SITUACOES[$state] ?? $state),
+                IconEntry::make('suspensao_residencia')->label('Suspensão da residência')->boolean(),
+                TextEntry::make('perda_vaga')->label('Perda da vaga')->badge()->placeholder('-')
+                    ->formatStateUsing(fn (?string $state) => Ocorrencia::SITUACOES[$state] ?? $state),
+                Visualizacao::texto('medidas', 'Medidas'),
+            ]),
+
+            Section::make('Atividades orientadas')->columns(2)->schema([
+                TextEntry::make('horas_recebidas')->label('Total de horas recebidas')->placeholder('-'),
+                TextEntry::make('horas_cumpridas')->label('Horas cumpridas')->placeholder('-'),
+                TextEntry::make('setor')->label('Setor')->placeholder('-'),
+                TextEntry::make('servidor')->label('Servidor responsável')->placeholder('-'),
+                Visualizacao::texto('atividades_orientadas', 'Atividades orientadas'),
+            ]),
+
+            Section::make('Práticas restaurativas e encaminhamentos')->schema([
+                Visualizacao::texto('praticas_restaurativas', 'Práticas restaurativas'),
+                Visualizacao::texto('outros_encaminhamentos', 'Outros encaminhamentos'),
+            ]),
+        ]);
+    }
+}

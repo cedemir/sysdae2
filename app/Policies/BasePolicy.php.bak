@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Support\Perfis;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Regras de acesso por perfil. O admin tem acesso total (método before).
+ * Cada policy filha define quem edita ($editores) e quem apenas consulta ($leitores).
+ */
+abstract class BasePolicy
+{
+    /** @var list<string> */
+    protected array $editores = [];
+
+    /** @var list<string> */
+    protected array $leitores = [];
+
+    public function before(User $user, string $ability): ?bool
+    {
+        return $user->hasRole(Perfis::ADMIN) ? true : null;
+    }
+
+    public function viewAny(User $user): bool
+    {
+        return $user->hasAnyRole([...$this->editores, ...$this->leitores]);
+    }
+
+    public function view(User $user, Model $registro): bool
+    {
+        return $this->viewAny($user);
+    }
+
+    public function create(User $user): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function update(User $user, Model $registro): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function delete(User $user, Model $registro): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function restore(User $user, Model $registro): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function restoreAny(User $user): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function forceDelete(User $user, Model $registro): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    public function forceDeleteAny(User $user): bool
+    {
+        return $this->podeEditar($user);
+    }
+
+    protected function podeEditar(User $user): bool
+    {
+        return $this->editores !== [] && $user->hasAnyRole($this->editores);
+    }
+}

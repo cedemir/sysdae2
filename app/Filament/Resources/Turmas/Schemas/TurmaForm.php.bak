@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Filament\Resources\Turmas\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class TurmaForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('codigo')
+                    ->required(),
+                Select::make('curso_id')
+                    ->relationship('curso', 'id')
+                    ->required(),
+                Select::make('serie_id')
+                    ->relationship('serie', 'id'),
+                TextInput::make('ano_letivo')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('turno')
+                    ->required()
+                    ->default('integral'),
+                Toggle::make('ativa')
+                    ->required(),
+            ]);
+    }
+}

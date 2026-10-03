@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\Acesso;
+use Illuminate\Support\Facades\Cache;
+
+/**
+ * Lê (com cache) o que cada perfil pode fazer em cada cadastro.
+ * Se não houver linha na tabela, vale o padrão definido na policy do cadastro.
+ */
+final class PermissoesPerfil
+{
+    public const NENHUM = 'nenhum';
+    public const CONSULTA = 'consulta';
+    public const EDICAO = 'edicao';
+
+    public const NIVEIS = [
+        self::NENHUM => 'Sem acesso',
+        self::CONSULTA => 'Só consulta',
+        self::EDICAO => 'Consulta e edição',
+    ];
+
+    private const CHAVE = 'sysdae.permissoes_perfil';
+
+    /** Nível do perfil no cadastro; $padrao vale quando a tabela não tem linha para a combinação. */
+    public static function nivel(string $perfil, string $recurso, string $padrao): string
+    {
+        return self::mapa()[$perfil][$recurso] ?? $padrao;
+    }
+
+    /**
+     * Cria as linhas que faltam (um registro por perfil e cadastro) com o padrão de cada policy.
+     * Devolve quantas linhas foram criadas.
+     */
+    public static function sincronizar(): int
+    {
+        $existentes = Acesso::query()->get(['perfil', 'recurso'])
+            ->map(fn (Acesso $acesso) => $acesso->perfil . '|' . $acesso->recurso)
+            ->flip();
+
+        $agora = now();
+        $novas = [];
+        $ordem = 0;
+
+        foreach (Recursos::todos() as $chave => $recurso) {
+            $ordem++;
+            $policy = new $recurso['policy']();
+
+            foreach (Recursos::perfisEditaveis() as $perfil) {
+                if ($existentes->has($perfil . '|' . $chave)) {
+                    continue;
+                }
+                $novas[] = [
+                    'perfil' => $perfil,
+                    'recurso' => $chave,
+                    'nivel' => $policy->nivelPadrao($perfil),
+                    'ordem' => $ordem,
+                    'created_at' => $agora,
+                    'updated_at' => $agora,
+                ];
+            }
+        }
+
+        if ($novas === []) {
+            return 0;
+        }
+
+        Acesso::insert($novas); // em lote: não gera um registro de auditoria por linha
+        self::limparCache();
+
+        return count($novas);
+    }
+
+    public static function limparCache(): void
+    {
+        Cache::forget(self::CHAVE);
+
+        if (app()->bound(self::CHAVE)) {
+            app()->forgetInstance(self::CHAVE);
+        }
+    }
+
+    /** @return array<string, array<string, string>> perfil => [cadastro => nível] */
+    private static function mapa(): array
+    {
+        // Guarda no container: vale só para a requisição atual (e cada teste começa do zero).
+        if (! app()->bound(self::CHAVE)) {
+            app()->instance(self::CHAVE, Cache::rememberForever(self::CHAVE, function (): array {
+                $mapa = [];
+                foreach (Acesso::query()->get(['perfil', 'recurso', 'nivel']) as $acesso) {
+                    $mapa[$acesso->perfil][$acesso->recurso] = $acesso->nivel;
+                }
+
+                return $mapa;
+            }));
+        }
+
+        return app(self::CHAVE);
+    }
+
+    private function __construct()
+    {
+    }
+}

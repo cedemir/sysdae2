@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Filament\Resources\Atas\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class AtaForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('numero')
+                    ->required(),
+                DatePicker::make('data_reuniao')
+                    ->required(),
+                TextInput::make('assunto')
+                    ->required(),
+                Textarea::make('participantes')
+                    ->columnSpanFull(),
+                Textarea::make('pauta')
+                    ->columnSpanFull(),
+                Textarea::make('deliberacoes')
+                    ->columnSpanFull(),
+                Textarea::make('encaminhamentos')
+                    ->columnSpanFull(),
+                TextInput::make('user_id')
+                    ->numeric(),
+            ]);
+    }
+}

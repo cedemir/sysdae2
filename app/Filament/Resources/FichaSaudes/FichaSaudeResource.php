@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Resources\FichaSaudes;
+
+use App\Filament\Resources\FichaSaudes\Pages\CreateFichaSaude;
+use App\Filament\Resources\FichaSaudes\Pages\EditFichaSaude;
+use App\Filament\Resources\FichaSaudes\Pages\ListFichaSaudes;
+use App\Filament\Resources\FichaSaudes\Schemas\FichaSaudeForm;
+use App\Filament\Resources\FichaSaudes\Tables\FichaSaudesTable;
+use App\Models\FichaSaude;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class FichaSaudeResource extends Resource
+{
+    protected static ?string $model = FichaSaude::class;
+
+    protected static ?string $modelLabel = 'Ficha de saúde';
+
+    protected static ?string $pluralModelLabel = 'Fichas de saúde';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return FichaSaudeForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return \App\Filament\Resources\FichaSaudes\Schemas\FichaSaudeInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return FichaSaudesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListFichaSaudes::route('/'),
+            'create' => CreateFichaSaude::route('/create'),
+            'view' => \App\Filament\Resources\FichaSaudes\Pages\ViewFichaSaude::route('/{record}'),
+            'edit' => EditFichaSaude::route('/{record}/edit'),
+        ];
+    }
+}

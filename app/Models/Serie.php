@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Serie extends Model
+{
+    use \App\Models\Concerns\Auditavel;
+
+    protected $table = 'series';
+
+    protected $fillable = ['ordem', 'nome', 'ativa'];
+
+    protected function casts(): array
+    {
+        return ['ativa' => 'boolean'];
+    }
+
+    public function turmas(): HasMany
+    {
+        return $this->hasMany(Turma::class);
+    }
+}

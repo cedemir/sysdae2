@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Filament\Resources\Regimes\Schemas;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class RegimeForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('nome')
+                    ->required(),
+                Textarea::make('descricao')
+                    ->columnSpanFull(),
+                TextInput::make('aplica_se_a')
+                    ->required()
+                    ->default('todos'),
+                Toggle::make('ativo')
+                    ->required(),
+            ]);
+    }
+}

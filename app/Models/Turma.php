@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Turma extends Model
+{
+    use \App\Models\Concerns\Auditavel;
+
+    protected $table = 'turmas';
+
+    public const TURNOS = [
+        'matutino' => 'Matutino',
+        'vespertino' => 'Vespertino',
+        'noturno' => 'Noturno',
+        'integral' => 'Integral',
+    ];
+
+    protected $fillable = ['codigo', 'curso_id', 'serie_id', 'ano_letivo', 'turno', 'ativa'];
+
+    protected function casts(): array
+    {
+        return ['ativa' => 'boolean'];
+    }
+
+    public function curso(): BelongsTo
+    {
+        return $this->belongsTo(Curso::class);
+    }
+
+    public function serie(): BelongsTo
+    {
+        return $this->belongsTo(Serie::class);
+    }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(Matricula::class);
+    }
+}

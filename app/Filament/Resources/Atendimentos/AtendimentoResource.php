@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Resources\Atendimentos;
+
+use App\Filament\Resources\Atendimentos\Pages\CreateAtendimento;
+use App\Filament\Resources\Atendimentos\Pages\EditAtendimento;
+use App\Filament\Resources\Atendimentos\Pages\ListAtendimentos;
+use App\Filament\Resources\Atendimentos\Schemas\AtendimentoForm;
+use App\Filament\Resources\Atendimentos\Tables\AtendimentosTable;
+use App\Models\Atendimento;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class AtendimentoResource extends Resource
+{
+    protected static ?string $model = Atendimento::class;
+
+    protected static ?string $modelLabel = 'Atendimento psicossocial';
+
+    protected static ?string $pluralModelLabel = 'Atendimentos psicossociais';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return AtendimentoForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return \App\Filament\Resources\Atendimentos\Schemas\AtendimentoInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return AtendimentosTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAtendimentos::route('/'),
+            'create' => CreateAtendimento::route('/create'),
+            'view' => \App\Filament\Resources\Atendimentos\Pages\ViewAtendimento::route('/{record}'),
+            'edit' => EditAtendimento::route('/{record}/edit'),
+        ];
+    }
+}

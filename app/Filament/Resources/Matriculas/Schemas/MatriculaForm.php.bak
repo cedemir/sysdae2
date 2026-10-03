@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Filament\Resources\Matriculas\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class MatriculaForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('aluno_id')
+                    ->relationship('aluno', 'id')
+                    ->required(),
+                Select::make('turma_id')
+                    ->relationship('turma', 'id')
+                    ->required(),
+                TextInput::make('numero')
+                    ->required(),
+                DatePicker::make('data_matricula')
+                    ->required(),
+                TextInput::make('situacao')
+                    ->required()
+                    ->default('cursando'),
+                Textarea::make('observacoes')
+                    ->columnSpanFull(),
+            ]);
+    }
+}

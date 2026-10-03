@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Ocorrencia;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+
+/**
+ * Lista e baixa os anexos das ocorrências. O acesso segue a mesma regra da ocorrência:
+ * ocorrências sigilosas nem são encontradas por quem não pode vê-las (404).
+ */
+class AnexoController
+{
+    public function listar(Ocorrencia $ocorrencia)
+    {
+        Gate::authorize('view', $ocorrencia);
+
+        $ocorrencia->load('aluno');
+
+        return view('anexos.ocorrencia', [
+            'ocorrencia' => $ocorrencia,
+            'arquivos' => $this->arquivos($ocorrencia),
+        ]);
+    }
+
+    public function baixar(Ocorrencia $ocorrencia, int $indice)
+    {
+        Gate::authorize('view', $ocorrencia);
+
+        $arquivos = $this->arquivos($ocorrencia);
+        abort_unless(isset($arquivos[$indice]), 404);
+
+        $disco = Storage::disk('local');
+        abort_unless($disco->exists($arquivos[$indice]['caminho']), 404);
+
+        \App\Models\Auditoria::registrar('baixou', 'Anexo de ocorrência', (int) $ocorrencia->id, $arquivos[$indice]['nome']);
+
+        return $disco->download($arquivos[$indice]['caminho'], $arquivos[$indice]['nome']);
+    }
+
+    /** @return list<array{caminho: string, nome: string}> */
+    private function arquivos(Ocorrencia $ocorrencia): array
+    {
+        $caminhos = array_values($ocorrencia->anexos ?? []);
+        $nomes = $ocorrencia->anexos_nomes ?? [];
+
+        $arquivos = [];
+        foreach ($caminhos as $i => $caminho) {
+            $arquivos[] = [
+                'caminho' => $caminho,
+                'nome' => $nomes[$caminho] ?? $nomes[basename($caminho)] ?? $nomes[$i] ?? basename($caminho),
+            ];
+        }
+
+        return $arquivos;
+    }
+}

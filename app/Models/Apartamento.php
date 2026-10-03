@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Apartamento extends Model
+{
+    use \App\Models\Concerns\Auditavel;
+
+    protected $table = 'apartamentos';
+
+    protected $fillable = ['numero', 'alojamento_id', 'andar', 'capacidade', 'ativo'];
+
+    protected function casts(): array
+    {
+        return ['ativo' => 'boolean'];
+    }
+
+    public function alojamento(): BelongsTo
+    {
+        return $this->belongsTo(Alojamento::class);
+    }
+
+    public function residencias(): HasMany
+    {
+        return $this->hasMany(Residencia::class);
+    }
+
+    /** Quantidade de alunos atualmente no apartamento. */
+    public function ocupacao(): int
+    {
+        return $this->residencias()->count();
+    }
+}

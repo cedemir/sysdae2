@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Filament\Resources\TrocaApartamentos;
+
+use App\Filament\Resources\TrocaApartamentos\Pages\CreateTrocaApartamento;
+use App\Filament\Resources\TrocaApartamentos\Pages\EditTrocaApartamento;
+use App\Filament\Resources\TrocaApartamentos\Pages\ListTrocaApartamentos;
+use App\Filament\Resources\TrocaApartamentos\Schemas\TrocaApartamentoForm;
+use App\Filament\Resources\TrocaApartamentos\Tables\TrocaApartamentosTable;
+use App\Models\TrocaApartamento;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class TrocaApartamentoResource extends Resource
+{
+    protected static ?string $model = TrocaApartamento::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return TrocaApartamentoForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return TrocaApartamentosTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListTrocaApartamentos::route('/'),
+            'create' => CreateTrocaApartamento::route('/create'),
+            'edit' => EditTrocaApartamento::route('/{record}/edit'),
+        ];
+    }
+}

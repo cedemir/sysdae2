@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Support;
+
+/** Perfis de acesso do sistema (mesmos perfis da versão desktop). */
+final class Perfis
+{
+    public const ADMIN = 'admin';
+    public const DAE_CENTRAL = 'dae_central';
+    public const RESIDENCIA = 'residencia_estudantil';
+    public const PSICOSSOCIAL = 'psicossocial';
+    public const SOMENTE_CONSULTA = 'somente_consulta';
+
+    public const TODOS = [
+        self::ADMIN,
+        self::DAE_CENTRAL,
+        self::RESIDENCIA,
+        self::PSICOSSOCIAL,
+        self::SOMENTE_CONSULTA,
+    ];
+
+    private function __construct()
+    {
+    }
+}

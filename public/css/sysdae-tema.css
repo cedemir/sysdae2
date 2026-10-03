@@ -1,0 +1,82 @@
+/* Tema azul e branco do SYSDAE (carregado pelo AdminPanelProvider). */
+
+/* Fundo das páginas: branco azulado bem claro. */
+.fi-body { background-color: #f4f7fd; }
+
+/* Barra do topo azul (e o cabeçalho do menu no celular), com textos e ícones brancos. */
+.fi-topbar,
+.fi-sidebar-header {
+    background-color: #1e40af;
+    --tw-ring-color: #1e3a8a;
+}
+.fi-topbar .fi-logo,
+.fi-sidebar-header .fi-logo,
+.fi-sidebar-header .fi-icon-btn .fi-icon,
+.fi-topbar .fi-icon-btn,
+.fi-topbar .fi-icon-btn .fi-icon,
+.fi-topbar .fi-topbar-item-label,
+.fi-topbar .fi-topbar-item-btn > .fi-icon {
+    color: #ffffff;
+}
+.fi-topbar .fi-icon-btn:hover,
+.fi-topbar .fi-topbar-item-btn:hover,
+.fi-topbar .fi-topbar-item.fi-active .fi-topbar-item-btn {
+    background-color: rgb(255 255 255 / 0.15);
+}
+
+/* Menu lateral branco, com o item ativo destacado em azul. */
+.fi-sidebar.fi-sidebar-open,
+.fi-sidebar-nav {
+    background-color: #ffffff;
+}
+.fi-sidebar {
+    border-inline-end: 1px solid #dbe4f5;
+}
+.fi-sidebar-group-label {
+    color: #1e40af;
+    font-weight: 600;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: #1e40af;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon {
+    color: #ffffff;
+}
+.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover {
+    background-color: #e8eefc;
+}
+
+/* ---------- Modo escuro: fundo azul-marinho e letras brancas ---------- */
+
+.dark .fi-body {
+    background-color: var(--gray-950);
+    color: #ffffff;
+}
+
+.dark .fi-topbar,
+.dark .fi-sidebar-header {
+    background-color: var(--gray-900);
+    --tw-ring-color: var(--gray-800);
+}
+
+.dark .fi-sidebar.fi-sidebar-open,
+.dark .fi-sidebar-nav {
+    background-color: var(--gray-900);
+}
+.dark .fi-sidebar {
+    border-inline-end-color: var(--gray-800);
+}
+.dark .fi-sidebar-group-label {
+    color: #bfdbfe;
+}
+.dark .fi-sidebar-item-label,
+.dark .fi-sidebar-item-icon {
+    color: #ffffff;
+}
+.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: #2563eb;
+}
+.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover {
+    background-color: var(--gray-800);
+}
