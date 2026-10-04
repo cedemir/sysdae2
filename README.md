@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-# sysdae2
-sysdae 2.0
-=======
+# SYSDAE 2.0
 
 1. Acesso e usuários
 Login com opção "lembrar de mim".
@@ -60,7 +57,3 @@ A tela permite filtrar por evento e por entidade e mostra usuário, IP e detalhe
 7. Comandos de console
 php artisan sysdae:perfil {email} {perfil}: atribui um perfil a um usuário.
 php artisan sysdae:permissoes-sincronizar: cria as linhas que faltam na tabela de acessos por perfil, usando o padrão de cada cadastro.
-
-=======================
-===========================
-
