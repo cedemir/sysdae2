@@ -10,19 +10,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
 
 class UserForm
 {
-    public const ROTULOS_PERFIL = [
-        Perfis::ADMIN => 'Administrador',
-        Perfis::DAE_CENTRAL => 'DAE Central',
-        Perfis::RESIDENCIA => 'Residência Estudantil',
-        Perfis::PSICOSSOCIAL => 'Psicossocial',
-        Perfis::SOMENTE_CONSULTA => 'SomenteConsulta',
-    ];
-
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -42,10 +35,9 @@ class UserForm
                             ->unique(ignoreRecord: true),
                         Select::make('roles')
                             ->label('Perfil de acesso')
-                            ->relationship('roles', 'name')
-                            ->getOptionLabelFromRecordUsing(
-                                fn (Role $record) => self::ROTULOS_PERFIL[$record->name] ?? $record->name
-                            )
+                            ->relationship('roles', 'name', fn (Builder $query) => $query->where('ativo', true))
+                            ->getOptionLabelFromRecordUsing(fn (Role $record) => Perfis::rotulo($record->name))
+                            ->helperText('Só aparecem os perfis ativos. Os perfis são cadastrados no menu "Perfis".')
                             ->multiple()
                             ->minItems(1)
                             ->maxItems(1)

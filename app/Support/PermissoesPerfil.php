@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Cache;
 final class PermissoesPerfil
 {
     public const NENHUM = 'nenhum';
+
     public const CONSULTA = 'consulta';
+
     public const EDICAO = 'edicao';
 
     public const NIVEIS = [
@@ -36,7 +38,7 @@ final class PermissoesPerfil
     public static function sincronizar(): int
     {
         $existentes = Acesso::query()->get(['perfil', 'recurso'])
-            ->map(fn (Acesso $acesso) => $acesso->perfil . '|' . $acesso->recurso)
+            ->map(fn (Acesso $acesso) => $acesso->perfil.'|'.$acesso->recurso)
             ->flip();
 
         $agora = now();
@@ -45,10 +47,10 @@ final class PermissoesPerfil
 
         foreach (Recursos::todos() as $chave => $recurso) {
             $ordem++;
-            $policy = isset($recurso['policy']) ? new $recurso['policy']() : null;
+            $policy = isset($recurso['policy']) ? new $recurso['policy'] : null;
 
             foreach (Recursos::perfisEditaveis() as $perfil) {
-                if ($existentes->has($perfil . '|' . $chave)) {
+                if ($existentes->has($perfil.'|'.$chave)) {
                     continue;
                 }
                 $novas[] = [
@@ -70,6 +72,19 @@ final class PermissoesPerfil
         self::limparCache();
 
         return count($novas);
+    }
+
+    /** Dá ao perfil $destino os mesmos níveis do perfil $origem em todos os cadastros e relatórios. */
+    public static function copiar(string $origem, string $destino): void
+    {
+        self::sincronizar();
+
+        foreach (Acesso::where('perfil', $origem)->get(['recurso', 'nivel']) as $acesso) {
+            // Em lote: sem um registro de auditoria por linha.
+            Acesso::where('perfil', $destino)->where('recurso', $acesso->recurso)->update(['nivel' => $acesso->nivel]);
+        }
+
+        self::limparCache();
     }
 
     public static function limparCache(): void
@@ -99,7 +114,5 @@ final class PermissoesPerfil
         return app(self::CHAVE);
     }
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 }

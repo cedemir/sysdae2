@@ -13,6 +13,7 @@ use App\Models\TrocaApartamento;
 use App\Models\User;
 use App\Support\Formatos;
 use App\Support\Perfis;
+use App\Support\Recursos;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,7 @@ class RelatorioService
     /** @return array<string, array{rotulo: string, perfis: list<string>, usa: list<string>, exige: list<string>}> */
     public static function permitidos(User $usuario): array
     {
-        return array_filter(self::tipos(), fn (array $tipo, string $chave) => \App\Support\Recursos::podeGerarRelatorio($usuario, $chave), ARRAY_FILTER_USE_BOTH);
+        return array_filter(self::tipos(), fn (array $tipo, string $chave) => Recursos::podeGerarRelatorio($usuario, $chave), ARRAY_FILTER_USE_BOTH);
     }
 
     public function gerar(string $tipo, ?Aluno $aluno, ?Carbon $de, ?Carbon $ate, ?string $apto): array
@@ -161,7 +162,7 @@ class RelatorioService
         return $this->relatorio(
             "Alunos do apartamento {$apto->numero}",
             ["Alojamento: {$apto->alojamento->nome}"],
-            ['Total de alunos: ' . count($linhas) . ' de ' . $apto->capacidade . ' vagas'],
+            ['Total de alunos: '.count($linhas).' de '.$apto->capacidade.' vagas'],
             [$this->secao(null, ['Foto', 'Nome', 'Turma', 'Telefone do aluno', 'Responsável / telefone'], $linhas)]
         );
     }
@@ -180,7 +181,7 @@ class RelatorioService
         return $this->relatorio(
             'Trocas de apartamento',
             [$this->periodo($de, $ate)],
-            ['Total de trocas: ' . $trocas->count()],
+            ['Total de trocas: '.$trocas->count()],
             [$this->secao(null, ['Data', 'Aluno', 'Saiu do apartamento', 'Foi para'], $trocas->map(fn (TrocaApartamento $t) => [
                 $this->data($t->data_troca), $t->aluno->nome, $t->origem?->numero ?? '-', $t->destino?->numero ?? 'sem apartamento',
             ])->all())]
@@ -197,18 +198,18 @@ class RelatorioService
             ->get();
 
         $primeiro = $historico->first()?->origem?->numero ?? $residencia?->apartamento?->numero ?? 'não informado';
-        $entrada = $residencia?->data_entrada ? ' (entrada em ' . $this->data($residencia->data_entrada) . ')' : '';
+        $entrada = $residencia?->data_entrada ? ' (entrada em '.$this->data($residencia->data_entrada).')' : '';
 
         $noPeriodo = $historico->filter(
             fn (TrocaApartamento $t) => (! $de || $t->data_troca->gte($de)) && (! $ate || $t->data_troca->lte($ate))
         );
 
         return $this->relatorio(
-            'Trocas de apartamento - ' . $aluno->nome,
-            ['Aluno: ' . $aluno->nome . ' (CPF ' . Formatos::cpf($aluno->cpf) . ')', $this->periodo($de, $ate)],
+            'Trocas de apartamento - '.$aluno->nome,
+            ['Aluno: '.$aluno->nome.' (CPF '.Formatos::cpf($aluno->cpf).')', $this->periodo($de, $ate)],
             [
-                '1º apartamento: ' . $primeiro . $entrada,
-                'Apartamento atual: ' . ($residencia?->apartamento?->numero ?? 'sem apartamento'),
+                '1º apartamento: '.$primeiro.$entrada,
+                'Apartamento atual: '.($residencia?->apartamento?->numero ?? 'sem apartamento'),
             ],
             [$this->secao('Trocas', ['Data', 'Saiu do apartamento', 'Foi para'], $noPeriodo->map(fn (TrocaApartamento $t) => [
                 $this->data($t->data_troca), $t->origem?->numero ?? '-', $t->destino?->numero ?? 'sem apartamento',
@@ -232,7 +233,7 @@ class RelatorioService
         return $this->relatorio(
             'Faltas na residência',
             $this->filtros($aluno, $de, $ate),
-            ["Total de faltas: {$faltas->count()} (justificadas: {$justificadas}, não justificadas: " . ($faltas->count() - $justificadas) . ')'],
+            ["Total de faltas: {$faltas->count()} (justificadas: {$justificadas}, não justificadas: ".($faltas->count() - $justificadas).')'],
             [$this->secao(null, ['Data', 'Aluno', 'Situação', 'Observação'], $faltas->map(fn (Falta $f) => [
                 $this->data($f->data_falta), $f->aluno->nome, $f->justificada ? 'Justificada' : 'Não justificada', $f->observacao ?: '-',
             ])->all())]
@@ -251,7 +252,7 @@ class RelatorioService
         return $this->relatorio(
             'Autorizações de pernoite',
             $this->filtros($aluno, $de, $ate),
-            ['Total de autorizações: ' . $lista->count()],
+            ['Total de autorizações: '.$lista->count()],
             [$this->secao(null, ['Data', 'Aluno', 'Parcial', 'Forma', 'Autorizado por', 'Justificativa'], $lista->map(fn (Pernoite $p) => [
                 $this->data($p->data_pernoite), $p->aluno->nome, $p->parcial ? 'Sim' : 'Não',
                 $p->forma_autorizacao ?: '-', $p->quem_autorizou, $p->justificativa,
@@ -269,8 +270,8 @@ class RelatorioService
             ->orderBy('data_ocorrencia')->orderBy('id')
             ->get();
 
-        $resumo = ['Total de ocorrências: ' . $lista->count()];
-        if (! auth()->user()?->hasAnyRole([Perfis::ADMIN, Perfis::PSICOSSOCIAL])) {
+        $resumo = ['Total de ocorrências: '.$lista->count()];
+        if (! Perfis::veSigilosos(auth()->user())) {
             $resumo[] = 'Ocorrências sigilosas não são exibidas para o seu perfil.';
         }
 
@@ -297,9 +298,9 @@ class RelatorioService
         return $this->relatorio(
             'Atendimentos psicossociais',
             $this->filtros($aluno, $de, $ate),
-            ['Total de atendimentos: ' . $lista->count(), 'Documento sigiloso: uso restrito à equipe autorizada.'],
+            ['Total de atendimentos: '.$lista->count(), 'Documento sigiloso: uso restrito à equipe autorizada.'],
             [$this->secao(null, ['Data', 'Aluno', 'Forma', 'Servidores', 'Relato'], $lista->map(fn (Atendimento $a) => [
-                $this->data($a->data_atendimento) . ($a->hora_atendimento ? ' ' . substr($a->hora_atendimento, 0, 5) : ''),
+                $this->data($a->data_atendimento).($a->hora_atendimento ? ' '.substr($a->hora_atendimento, 0, 5) : ''),
                 $a->aluno->nome, Atendimento::FORMAS[$a->forma] ?? $a->forma, $a->servidores, $a->relato,
             ])->all())]
         );
@@ -335,13 +336,13 @@ class RelatorioService
 
         $residencia = $r ? [
             ['Categoria', Residencia::CATEGORIAS[$r->categoria] ?? $r->categoria],
-            ['Apartamento', $r->apartamento ? $r->apartamento->numero . ' (' . $r->apartamento->alojamento->nome . ')' : 'sem apartamento'],
+            ['Apartamento', $r->apartamento ? $r->apartamento->numero.' ('.$r->apartamento->alojamento->nome.')' : 'sem apartamento'],
             ['Regime', $r->regime?->nome ?? '-'],
             ['Entrada na residência', $r->data_entrada ? $this->data($r->data_entrada) : '-'],
         ] : [['Residência', 'Sem registro de residência']];
 
         return $this->relatorio(
-            'Ficha do aluno - ' . $aluno->nome,
+            'Ficha do aluno - '.$aluno->nome,
             [],
             [],
             [
@@ -371,7 +372,7 @@ class RelatorioService
     {
         $filtros = [];
         if ($aluno) {
-            $filtros[] = 'Aluno: ' . $aluno->nome . ' (CPF ' . Formatos::cpf($aluno->cpf) . ')';
+            $filtros[] = 'Aluno: '.$aluno->nome.' (CPF '.Formatos::cpf($aluno->cpf).')';
         }
         $filtros[] = $this->periodo($de, $ate);
 
@@ -384,7 +385,7 @@ class RelatorioService
             return 'Período: todo o histórico';
         }
 
-        return 'Período: ' . ($de ? $de->format('d/m/Y') : 'início') . ' a ' . ($ate ? $ate->format('d/m/Y') : 'hoje');
+        return 'Período: '.($de ? $de->format('d/m/Y') : 'início').' a '.($ate ? $ate->format('d/m/Y') : 'hoje');
     }
 
     private function data(mixed $data): string
@@ -400,6 +401,6 @@ class RelatorioService
             return null;
         }
 
-        return 'data:' . ($disco->mimeType($aluno->foto_path) ?: 'image/jpeg') . ';base64,' . base64_encode($disco->get($aluno->foto_path));
+        return 'data:'.($disco->mimeType($aluno->foto_path) ?: 'image/jpeg').';base64,'.base64_encode($disco->get($aluno->foto_path));
     }
 }

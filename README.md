@@ -5,6 +5,7 @@ Login com opção "lembrar de mim".
 Alterar a própria senha: botão no Painel e página própria.
 Usuários: cadastro, ativação e inativação, e filtro por perfil e situação. Quando um usuário é inativado ou excluído, as sessões dele caem na hora e o "lembrar de mim" deixa de valer.
 Cinco perfis: Administrador, DAE Central, Residência Estudantil, Psicossocial e Somente consulta.
+Perfis: tela para cadastrar novos perfis (nome, descrição, ativo e "vê registros sigilosos"), podendo copiar os acessos de um perfil existente. Os cinco perfis originais não podem ser excluídos; um perfil com usuários também não. Inativar um perfil tira o acesso de quem só tem ele e derruba as sessões.
 Acessos por perfil: uma tela para definir, em cada cadastro e perfil, o nível de acesso (Sem acesso, Consulta ou Edição). Cada relatório também é liberado por perfil, como "Pode gerar".
 Tema por usuário: Clássico ou Moderno, trocado pelo menu do perfil.
 
@@ -29,7 +30,7 @@ Ocorrências disciplinares: advertência, suspensão da residência, perda da va
 Aceitam anexos, com download controlado (/anexos/ocorrencias/...). Os arquivos são apagados do disco quando a ocorrência é excluída.
 Podem ser marcadas como sigilosas.
 Atendimentos psicossociais: data, hora, forma, servidores envolvidos e sigilo.
-Sigilo: registros sigilosos de ocorrências e atendimentos só aparecem para Administrador e Psicossocial, em todas as telas, relatórios e relacionamentos.
+Sigilo: registros sigilosos de ocorrências e atendimentos só aparecem para Administrador, Psicossocial e perfis marcados com "vê registros sigilosos", em todas as telas, relatórios e relacionamentos.
 
 Ficha de saúde: tipo sanguíneo, alergias, restrições alimentares, necessidades especiais, cartão SUS, plano de saúde e unidade de referência. Guarda quem atualizou por último.
 Atas: número, assunto, alunos citados e impressão em PDF.

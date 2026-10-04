@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Acessos\Tables;
 
-use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Models\Acesso;
+use App\Support\Perfis;
 use App\Support\PermissoesPerfil;
 use App\Support\Recursos;
 use Filament\Tables\Columns\SelectColumn;
@@ -21,16 +21,16 @@ class AcessosTable
         PermissoesPerfil::sincronizar();
 
         $perfis = collect(Recursos::perfisEditaveis())
-            ->mapWithKeys(fn (string $perfil) => [$perfil => UserForm::ROTULOS_PERFIL[$perfil] ?? $perfil])
+            ->mapWithKeys(fn (string $perfil) => [$perfil => Perfis::rotulo($perfil)])
             ->all();
 
         return $table
             ->description('Escolha, para cada perfil, o que ele pode fazer em cada cadastro. '
-                . 'A mudança vale na hora. O administrador sempre tem acesso a tudo. '
-                . 'Ocorrências e atendimentos sigilosos continuam restritos ao administrador e à equipe psicossocial, '
-                . 'mesmo que outro perfil tenha acesso ao cadastro. '
-                . 'Os relatórios aparecem no fim da lista de cada perfil e só funcionam para quem também '
-                . 'pode consultar as tabelas de onde eles leem os dados.')
+                .'A mudança vale na hora. O administrador sempre tem acesso a tudo. '
+                .'Ocorrências e atendimentos sigilosos só aparecem para o administrador, a equipe psicossocial '
+                .'e os perfis marcados com "Vê registros sigilosos" no menu Perfis, mesmo que outro perfil tenha acesso ao cadastro. '
+                .'Os relatórios aparecem no fim da lista de cada perfil e só funcionam para quem também '
+                .'pode consultar as tabelas de onde eles leem os dados.')
             ->columns([
                 TextColumn::make('recurso')
                     ->label('Cadastro')
@@ -45,7 +45,7 @@ class AcessosTable
             ->groups([
                 Group::make('perfil')
                     ->label('Perfil')
-                    ->getTitleFromRecordUsing(fn (Acesso $record): string => UserForm::ROTULOS_PERFIL[$record->perfil] ?? $record->perfil),
+                    ->getTitleFromRecordUsing(fn (Acesso $record): string => Perfis::rotulo($record->perfil)),
             ])
             ->defaultGroup('perfil')
             ->filters([

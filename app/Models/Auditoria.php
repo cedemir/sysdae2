@@ -47,6 +47,7 @@ class Auditoria extends Model
         'Ata' => 'Ata de reunião',
         'User' => 'Usuário',
         'Acesso' => 'Permissão de perfil',
+        'Perfil' => 'Perfil de acesso',
     ];
 
     /** Tabelas cujo conteúdo nunca vai para o log: só os nomes dos campos alterados. */
@@ -163,16 +164,16 @@ class Auditoria extends Model
         $partes = [];
 
         if (isset($dados['campos'])) {
-            $partes[] = 'Campos: ' . implode(', ', $dados['campos']);
+            $partes[] = 'Campos: '.implode(', ', $dados['campos']);
         }
         foreach ($dados['mudancas'] ?? [] as $campo => $valores) {
-            $partes[] = $campo . ': ' . ($valores['de'] ?? 'vazio') . ' → ' . ($valores['para'] ?? 'vazio');
+            $partes[] = $campo.': '.($valores['de'] ?? 'vazio').' → '.($valores['para'] ?? 'vazio');
         }
         foreach ($dados['valores'] ?? [] as $campo => $valor) {
-            $partes[] = $campo . ': ' . ($valor ?? 'vazio');
+            $partes[] = $campo.': '.($valor ?? 'vazio');
         }
         foreach ($dados['detalhes'] ?? [] as $campo => $valor) {
-            $partes[] = $campo . ': ' . (is_scalar($valor) || $valor === null ? ($valor ?? 'vazio') : json_encode($valor));
+            $partes[] = $campo.': '.(is_scalar($valor) || $valor === null ? ($valor ?? 'vazio') : json_encode($valor));
         }
 
         return implode(' | ', $partes);
@@ -198,10 +199,10 @@ class Auditoria extends Model
         if ($modelo->getAttribute('aluno_id')) {
             $aluno = Aluno::find($modelo->getAttribute('aluno_id'));
             if ($aluno) {
-                return 'Aluno: ' . $aluno->nome;
+                return 'Aluno: '.$aluno->nome;
             }
         }
 
-        return '#' . $modelo->getKey();
+        return '#'.$modelo->getKey();
     }
 }

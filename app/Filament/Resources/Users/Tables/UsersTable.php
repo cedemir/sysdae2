@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
-use App\Filament\Resources\Users\Schemas\UserForm;
+use App\Support\Perfis;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -26,7 +26,7 @@ class UsersTable
                 TextColumn::make('roles.name')
                     ->label('Perfil')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state) => UserForm::ROTULOS_PERFIL[$state] ?? $state),
+                    ->formatStateUsing(fn (?string $state) => Perfis::rotulo($state)),
                 IconColumn::make('ativo')
                     ->label('Ativo')
                     ->boolean(),
@@ -40,7 +40,7 @@ class UsersTable
                 SelectFilter::make('perfil')
                     ->label('Perfil')
                     ->relationship('roles', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => UserForm::ROTULOS_PERFIL[$record->name] ?? $record->name),
+                    ->getOptionLabelFromRecordUsing(fn ($record) => Perfis::rotulo($record->name)),
                 TernaryFilter::make('ativo')
                     ->label('Situação')
                     ->trueLabel('Ativos')

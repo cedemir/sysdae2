@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Support\Perfis;
 use App\Support\PermissoesPerfil;
+use App\Support\Recursos;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -95,7 +96,7 @@ abstract class BasePolicy
     /** Nível inicial do perfil neste cadastro (usado para preencher a tabela de acessos). */
     public function nivelPadrao(string $perfil): string
     {
-        $extra = \App\Support\Recursos::padraoDoPerfil($perfil, $this->recurso());
+        $extra = Recursos::padraoDoPerfil($perfil, $this->recurso());
         if ($extra !== null) {
             return $extra;
         }
@@ -131,7 +132,7 @@ abstract class BasePolicy
     /** @param list<string> $niveis */
     private function temNivel(User $user, array $niveis): bool
     {
-        foreach ($user->getRoleNames() as $perfil) {
+        foreach ($user->perfisAtivos() as $perfil) {
             $nivel = PermissoesPerfil::nivel($perfil, $this->recurso(), $this->nivelPadrao($perfil));
 
             if (in_array($nivel, $niveis, true)) {

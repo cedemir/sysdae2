@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Models\Concerns\Auditavel;
+use App\Support\Perfis;
 use App\Support\PermissoesPerfil;
 use App\Support\Recursos;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,7 @@ class Acesso extends Model
     /** Descrição usada na auditoria. */
     public function getNomeAttribute(): string
     {
-        return (UserForm::ROTULOS_PERFIL[$this->perfil] ?? $this->perfil) . ' / ' . Recursos::rotulo($this->recurso);
+        return Perfis::rotulo($this->perfil).' / '.Recursos::rotulo($this->recurso);
     }
 
     /** @return array<string, string> níveis que este cadastro aceita */

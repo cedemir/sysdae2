@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Models\Auditoria;
 use App\Models\User;
 
@@ -10,7 +9,7 @@ use App\Models\User;
 final class AuditoriaDePerfil
 {
     /**
-     * @param  list<string>  $antes   nomes dos perfis antes da mudança
+     * @param  list<string>  $antes  nomes dos perfis antes da mudança
      * @param  list<string>  $depois  nomes dos perfis depois da mudança
      */
     public static function registrar(User $usuario, array $antes, array $depois): void
@@ -27,7 +26,7 @@ final class AuditoriaDePerfil
             'Usuário',
             (int) $usuario->id,
             $usuario->email,
-            ['detalhes' => ['perfil' => self::texto($antes) . ' → ' . self::texto($depois)]],
+            ['detalhes' => ['perfil' => self::texto($antes).' → '.self::texto($depois)]],
         );
     }
 
@@ -38,10 +37,8 @@ final class AuditoriaDePerfil
             return '(nenhum)';
         }
 
-        return implode(', ', array_map(fn (string $perfil) => UserForm::ROTULOS_PERFIL[$perfil] ?? $perfil, $perfis));
+        return implode(', ', array_map(fn (string $perfil) => Perfis::rotulo($perfil), $perfis));
     }
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 }

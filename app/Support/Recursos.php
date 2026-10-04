@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\User;
 use App\Policies\AlojamentoPolicy;
 use App\Policies\AlunoPolicy;
 use App\Policies\ApartamentoPolicy;
@@ -18,6 +19,9 @@ use App\Policies\ResidenciaPolicy;
 use App\Policies\SeriePolicy;
 use App\Policies\TrocaApartamentoPolicy;
 use App\Policies\TurmaPolicy;
+use App\Services\RelatorioService;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 /**
  * Cadastros (tabelas) cujo acesso por perfil pode ser escolhido na tela "Acessos por perfil".
@@ -42,9 +46,9 @@ final class Recursos
     {
         $itens = [];
 
-        foreach (\App\Services\RelatorioService::tipos() as $tipo => $dados) {
-            $itens['relatorio_' . $tipo] = [
-                'rotulo' => 'Relatório: ' . $dados['rotulo'],
+        foreach (RelatorioService::tipos() as $tipo => $dados) {
+            $itens['relatorio_'.$tipo] = [
+                'rotulo' => 'Relatório: '.$dados['rotulo'],
                 'tabela' => '(relatório)',
                 'policy' => null,
                 'niveis' => [PermissoesPerfil::NENHUM, PermissoesPerfil::CONSULTA],
@@ -74,19 +78,19 @@ final class Recursos
      * O usuário pode gerar o relatório? Administrador sempre pode. Os demais precisam da linha
      * do relatório liberada ("Pode gerar") E da consulta aos cadastros de onde ele lê os dados.
      */
-    public static function podeGerarRelatorio(\App\Models\User $usuario, string $tipo): bool
+    public static function podeGerarRelatorio(User $usuario, string $tipo): bool
     {
         if ($usuario->hasRole(Perfis::ADMIN)) {
             return true;
         }
 
-        $padrao = \App\Services\RelatorioService::tipos()[$tipo]['perfis'] ?? [];
+        $padrao = RelatorioService::tipos()[$tipo]['perfis'] ?? [];
         $liberado = false;
 
-        foreach ($usuario->getRoleNames() as $perfil) {
+        foreach ($usuario->perfisAtivos() as $perfil) {
             $nivelPadrao = in_array($perfil, $padrao, true) ? PermissoesPerfil::CONSULTA : PermissoesPerfil::NENHUM;
 
-            if (PermissoesPerfil::nivel($perfil, 'relatorio_' . $tipo, $nivelPadrao) === PermissoesPerfil::CONSULTA) {
+            if (PermissoesPerfil::nivel($perfil, 'relatorio_'.$tipo, $nivelPadrao) === PermissoesPerfil::CONSULTA) {
                 $liberado = true;
                 break;
             }
@@ -97,7 +101,7 @@ final class Recursos
         }
 
         foreach (self::cadastrosDoRelatorio($tipo) as $cadastro) {
-            if (! \Illuminate\Support\Facades\Gate::forUser($usuario)->allows('viewAny', self::modelo($cadastro))) {
+            if (! Gate::forUser($usuario)->allows('viewAny', self::modelo($cadastro))) {
                 return false;
             }
         }
@@ -108,13 +112,13 @@ final class Recursos
     /** Classe do model de um cadastro: ficha_saude => App\Models\FichaSaude. */
     public static function modelo(string $chave): string
     {
-        return 'App\\Models\\' . \Illuminate\Support\Str::studly($chave);
+        return 'App\\Models\\'.Str::studly($chave);
     }
 
     /** Texto pequeno que aparece sob o nome do cadastro na tela de acessos. */
     public static function descricao(?string $chave): string
     {
-        return str_starts_with((string) $chave, 'relatorio_') ? 'Relatório' : 'Tabela: ' . self::tabela($chave);
+        return str_starts_with((string) $chave, 'relatorio_') ? 'Relatório' : 'Tabela: '.self::tabela($chave);
     }
 
     /**
@@ -147,10 +151,17 @@ final class Recursos
         ];
     }
 
-    /** Perfis que o administrador pode configurar (o administrador sempre tem acesso total). */
+    /**
+     * Perfis que o administrador pode configurar: os originais e os cadastrados na tela "Perfis".
+     * O administrador fica de fora porque sempre tem acesso total.
+     *
+     * @return list<string>
+     */
     public static function perfisEditaveis(): array
     {
-        return [Perfis::DAE_CENTRAL, Perfis::RESIDENCIA, Perfis::PSICOSSOCIAL, Perfis::SOMENTE_CONSULTA];
+        $perfis = array_unique([...Perfis::TODOS, ...array_keys(Perfis::rotulos())]);
+
+        return array_values(array_diff($perfis, [Perfis::ADMIN]));
     }
 
     /**
@@ -190,7 +201,5 @@ final class Recursos
         return array_intersect_key($rotulos, array_flip($permitidos));
     }
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 }

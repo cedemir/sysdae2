@@ -7,8 +7,8 @@ use App\Filament\Resources\Cursos\CursoResource;
 use App\Filament\Resources\FichaSaudes\FichaSaudeResource;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Models\Acesso;
-use App\Models\Atendimento;
 use App\Models\Aluno;
+use App\Models\Atendimento;
 use App\Models\Auditoria;
 use App\Models\Curso;
 use App\Models\FichaSaude;
@@ -105,7 +105,7 @@ class PerfilSomenteConsultaTest extends TestCase
 
         $registro = Auditoria::where('entidade', 'Usuário')->get()
             ->first(fn (Auditoria $r) => isset($r->alteracoes['detalhes']['perfil']));
-        $this->assertSame('(nenhum) → SomenteConsulta', $registro->alteracoes['detalhes']['perfil']);
+        $this->assertSame('(nenhum) → Somente consulta', $registro->alteracoes['detalhes']['perfil']);
     }
 
     public function test_o_sigilo_continua_valendo_mesmo_se_o_administrador_liberar_o_cadastro(): void
